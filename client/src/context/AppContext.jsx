@@ -1,8 +1,8 @@
-import { useState, useContext, createContext, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth, useUser } from '@clerk/clerk-react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import { useState, useContext, createContext, useEffect } from "react";
+import axios from "axios";
+import { useAuth, useUser } from "@clerk/clerk-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -13,6 +13,9 @@ export const AppProvider = ({ children }) => {
   const [shows, setShows] = useState([]);
   const [favoriteMovies, setFavoriteMovies] = useState([]);
 
+
+  const image_base_url=import.meta.env.VITE_TMDB_IMAGE_BASE_URL
+
   const { user } = useUser();
   const { getToken } = useAuth();
   const location = useLocation();
@@ -20,23 +23,23 @@ export const AppProvider = ({ children }) => {
 
   const fetchIsAdmin = async () => {
     try {
-      const { data } = await axios.get('/api/admin/is-admin', {
+      const { data } = await axios.get("/api/admin/is-admin", {
         headers: { Authorization: `Bearer ${await getToken()}` },
       });
       setIsAdmin(data.isAdmin);
 
-      if (!data.isAdmin && location.pathname.startsWith('/admin')) {
-        toast.error('You are not authorized to access the admin dashboard');
+      if (!data.isAdmin && location.pathname.startsWith("/admin")) {
+        toast.error("You are not authorized to access the admin dashboard");
         setTimeout(() => {
-          navigate('/');
-        }, 10); 
+          navigate("/");
+        }, 10);
       }
     } catch (error) {
       console.error(error);
-      if (location.pathname.startsWith('/admin')) {
-        toast.error('You are not authorized to access the admin dashboard');
+      if (location.pathname.startsWith("/admin")) {
+        toast.error("You are not authorized to access the admin dashboard");
         setTimeout(() => {
-          navigate('/');
+          navigate("/");
         }, 10); // Delay redirect by 1 second to show toast
       }
     }
@@ -44,21 +47,21 @@ export const AppProvider = ({ children }) => {
 
   const fetchShows = async () => {
     try {
-      const { data } = await axios.get('/api/show/all');
+      const { data } = await axios.get("/api/show/all");
       if (data.success) {
         setShows(data.shows);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error('Error fetching shows:', error);
-      toast.error('Failed to fetch shows');
+      console.error("Error fetching shows:", error);
+      toast.error("Failed to fetch shows");
     }
   };
 
   const fetchFavoriteMovies = async () => {
     try {
-      const { data } = await axios.get('/api/user/favorites', {
+      const { data } = await axios.get("/api/user/favorites", {
         headers: { Authorization: `Bearer ${await getToken()}` },
       });
       if (data.success) {
@@ -67,8 +70,8 @@ export const AppProvider = ({ children }) => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error('Error fetching favorite movies:', error);
-      toast.error('Failed to fetch favorite movies');
+      console.error("Error fetching favorite movies:", error);
+      toast.error("Failed to fetch favorite movies");
     }
   };
 
@@ -93,6 +96,7 @@ export const AppProvider = ({ children }) => {
     shows,
     favoriteMovies,
     fetchFavoriteMovies,
+    image_base_url,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

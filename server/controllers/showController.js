@@ -3,23 +3,24 @@ import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
 
 //API to get now playing movies from TMDB API
-const getNowPlayingMovies = async (req, res) => {
+export const getNowPlayingMovies = async (req, res) => {
   try {
     const response = await axios.get(
       "https://api.themoviedb.org/3/movie/now_playing",
       {
         headers: {
           Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+          Accept: "application/json",
         },
       }
     );
-    res.json({ success: true, movies: response.data });
+    res.json({ success: true, movies: response.data.results });
   } catch (error) {
     console.error(error.message);
     res.json({ success: false, error: error.message });
   }
 };
-export default getNowPlayingMovies;
+// export default getNowPlayingMovies;
 
 //API to add a new show to the database
 export const addShow = async (req, res) => {
