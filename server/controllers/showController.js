@@ -91,7 +91,7 @@ export const addShow = async (req, res) => {
 //API to get all shows from the database
 export const getShows = async (req, res) => {
   try {
-    const shows = await Show.find({ showDateTime: { $lte: new Date() } })
+    const shows = await Show.find({ showDateTime: { $gte: new Date() } })
       .populate("movie")
       .sort({ showDateTime: 1 });
 
@@ -111,7 +111,7 @@ export const getShow = async (req, res) => {
     //get all upcoming shows for the movie
     const shows = await Show.find({
       movie: movieId,
-      showDateTime: { $lte: new Date() },
+      showDateTime: { $gte: new Date() },
     });
     const movie = await Movie.findById(movieId);
     const dateTime = {};
